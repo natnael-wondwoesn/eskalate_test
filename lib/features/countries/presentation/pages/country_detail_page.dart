@@ -122,7 +122,7 @@ class CountryDetailPage extends StatelessWidget {
 
   Widget _buildFlagImage() {
     try {
-      if (country.flags is Map && country.flags['png'] != null) {
+      if (country.flags is Map && country.flags['svg'] != null) {
         return Image.network(
           country.flags['svg'],
           width: double.infinity,
