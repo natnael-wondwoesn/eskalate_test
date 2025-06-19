@@ -21,7 +21,6 @@ class CountriesRemoteDataSourceImpl implements CountriesRemoteDataSource {
       final response = await dio.get(
         '$baseUrl/all',
         queryParameters: {
-          'status': 'true',
           'fields': 'name,region,subregion,population,area,timezones,flags',
         },
       );

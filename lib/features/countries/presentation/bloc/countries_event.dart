@@ -15,6 +15,15 @@ class RefreshCountriesEvent extends CountriesEvent {
   const RefreshCountriesEvent();
 }
 
+class SearchCountriesEvent extends CountriesEvent {
+  final String query;
+
+  const SearchCountriesEvent({required this.query});
+
+  @override
+  List<Object?> get props => [query];
+}
+
 class GetCountryByNameEvent extends CountriesEvent {
   final String countryName;
 

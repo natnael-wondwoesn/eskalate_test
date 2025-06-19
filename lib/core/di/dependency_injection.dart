@@ -13,6 +13,7 @@ import '../../features/countries/domain/usecase/get_all_countries_usecase.dart';
 import '../../features/countries/domain/usecase/get_country_by_name_usecase.dart';
 import '../../features/countries/presentation/bloc/countries_bloc.dart';
 import '../theme/theme_cubit.dart';
+import '../favorites/favorites_cubit.dart';
 
 final GetIt getIt = GetIt.instance;
 
@@ -95,6 +96,7 @@ Future<void> initializeDependencies() async {
     ),
   );
 
-  // Theme management
+  // Theme and Favorites management
   getIt.registerLazySingleton<ThemeCubit>(() => ThemeCubit());
+  getIt.registerLazySingleton<FavoritesCubit>(() => FavoritesCubit());
 }
