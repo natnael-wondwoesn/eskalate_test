@@ -3,6 +3,7 @@ import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:hydrated_bloc/hydrated_bloc.dart';
 import 'package:path_provider/path_provider.dart';
 
+import 'core/animations/page_transitions.dart';
 import 'core/di/dependency_injection.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/theme_cubit.dart';

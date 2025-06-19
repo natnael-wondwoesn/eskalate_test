@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/favorites/favorites_cubit.dart';
 import '../../domain/entity/countries_entity.dart';
 
@@ -32,10 +33,16 @@ class CountryDetailPage extends StatelessWidget {
                     _buildFlagSection(),
 
                     // Key Statistics section
-                    _buildKeyStatistics(context),
+                    SlideInAnimation(
+                      delay: const Duration(milliseconds: 300),
+                      child: _buildKeyStatistics(context),
+                    ),
 
                     // Timezone section
-                    _buildTimezoneSection(context),
+                    SlideInAnimation(
+                      delay: const Duration(milliseconds: 400),
+                      child: _buildTimezoneSection(context),
+                    ),
 
                     const SizedBox(height: 32),
                   ],
@@ -49,82 +56,85 @@ class CountryDetailPage extends StatelessWidget {
   }
 
   Widget _buildHeader(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-      child: Row(
-        children: [
-          GestureDetector(
-            onTap: () => Navigator.pop(context),
-            child: Container(
-              padding: const EdgeInsets.all(8),
-              child: Icon(
-                Icons.arrow_back,
-                color: Theme.of(context).colorScheme.onSurface,
-                size: 24,
+    return SlideInAnimation(
+      delay: const Duration(milliseconds: 100),
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+        child: Row(
+          children: [
+            GestureDetector(
+              onTap: () => Navigator.pop(context),
+              child: Container(
+                padding: const EdgeInsets.all(8),
+                child: Icon(
+                  Icons.arrow_back,
+                  color: Theme.of(context).colorScheme.onSurface,
+                  size: 24,
+                ),
               ),
             ),
-          ),
-          const SizedBox(width: 16),
-          Expanded(
-            child: Text(
-              country.name,
-              style: TextStyle(
-                fontSize: 20,
-                fontWeight: FontWeight.w600,
-                color: Theme.of(context).colorScheme.onSurface,
-              ),
-            ),
-          ),
-          // Favorite button
-          BlocBuilder<FavoritesCubit, FavoritesState>(
-            builder: (context, state) {
-              final isFavorite =
-                  context.read<FavoritesCubit>().isFavorite(country.name);
-
-              return GestureDetector(
-                onTap: () {
-                  context.read<FavoritesCubit>().toggleFavorite(country.name);
-                },
-                child: Container(
-                  padding: const EdgeInsets.all(8),
-                  child: Icon(
-                    isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite
-                        ? Colors.red
-                        : Theme.of(context)
-                            .colorScheme
-                            .onSurface
-                            .withValues(alpha: 0.6),
-                    size: 24,
+            const SizedBox(width: 16),
+            Expanded(
+              child: Hero(
+                tag: 'name-${country.name}',
+                child: Material(
+                  color: Colors.transparent,
+                  child: Text(
+                    country.name,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.w600,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ),
-              );
-            },
-          ),
-        ],
+              ),
+            ),
+            // Animated Favorite button
+            BlocBuilder<FavoritesCubit, FavoritesState>(
+              builder: (context, state) {
+                final isFavorite =
+                    context.read<FavoritesCubit>().isFavorite(country.name);
+
+                return AnimatedFavoriteButton(
+                  isFavorite: isFavorite,
+                  onTap: () {
+                    context.read<FavoritesCubit>().toggleFavorite(country.name);
+                  },
+                );
+              },
+            ),
+          ],
+        ),
       ),
     );
   }
 
   Widget _buildFlagSection() {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 12.0),
-      child: Container(
-        height: 240,
-        width: double.infinity,
-        decoration: BoxDecoration(
-          borderRadius: BorderRadius.circular(10),
-          boxShadow: [
-            BoxShadow(
-              color: Colors.black.withValues(alpha: 0.1),
-              blurRadius: 8,
-              offset: const Offset(0, 2),
+    return SlideInAnimation(
+      delay: const Duration(milliseconds: 200),
+      child: Padding(
+        padding: const EdgeInsets.only(bottom: 12.0),
+        child: Hero(
+          tag: 'flag-${country.name}',
+          child: Container(
+            height: 240,
+            width: double.infinity,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withValues(alpha: 0.1),
+                  blurRadius: 8,
+                  offset: const Offset(0, 2),
+                ),
+              ],
             ),
-          ],
-        ),
-        child: ClipRRect(
-          borderRadius: BorderRadius.circular(5),
-          child: _buildFlagImage(),
+            child: ClipRRect(
+              borderRadius: BorderRadius.circular(5),
+              child: _buildFlagImage(),
+            ),
+          ),
         ),
       ),
     );

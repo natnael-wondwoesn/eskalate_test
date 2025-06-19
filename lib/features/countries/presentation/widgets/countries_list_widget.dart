@@ -114,19 +114,24 @@ class CountriesListWidget extends StatelessWidget {
                         Text('Subregion: ${country.subregion}'),
                     ],
                   ),
-                  trailing: Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.end,
-                    children: [
-                      Text(
-                        'Pop: ${_formatNumber(country.population)}',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                      Text(
-                        'Area: ${_formatNumber(country.area)} km²',
-                        style: Theme.of(context).textTheme.bodySmall,
-                      ),
-                    ],
+                  trailing: SizedBox(
+                    width: 80,
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      crossAxisAlignment: CrossAxisAlignment.end,
+                      children: [
+                        Text(
+                          'Pop: ${_formatNumber(country.population)}',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                        Text(
+                          'Area: ${_formatNumber(country.area)} km²',
+                          style: Theme.of(context).textTheme.bodySmall,
+                          overflow: TextOverflow.ellipsis,
+                        ),
+                      ],
+                    ),
                   ),
                   onTap: () => _showCountryDetails(context, country),
                 ),

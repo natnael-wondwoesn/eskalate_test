@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
+import '../../../../core/animations/animated_widgets.dart';
 import '../../../../core/favorites/favorites_cubit.dart';
 import '../bloc/countries_bloc.dart';
 import '../bloc/countries_state.dart';
@@ -13,35 +14,43 @@ class FavoritesPage extends StatelessWidget {
   Widget build(BuildContext context) {
     return SafeArea(
       child: Column(
+        key: const ValueKey('favorites'),
         children: [
-          // Header
-          Padding(
-            padding: const EdgeInsets.all(16.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Favorites',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Theme.of(context).colorScheme.onSurface,
+          // Header with animation
+          SlideInAnimation(
+            delay: const Duration(milliseconds: 100),
+            child: Padding(
+              padding: const EdgeInsets.all(16.0),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Text(
+                    'Favorites',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
-                ),
-                BlocBuilder<FavoritesCubit, FavoritesState>(
-                  builder: (context, state) {
-                    if (state.favoriteCountries.isNotEmpty) {
-                      return TextButton(
-                        onPressed: () {
-                          _showClearDialog(context);
-                        },
-                        child: const Text('Clear All'),
-                      );
-                    }
-                    return const SizedBox.shrink();
-                  },
-                ),
-              ],
+                  BlocBuilder<FavoritesCubit, FavoritesState>(
+                    builder: (context, state) {
+                      if (state.favoriteCountries.isNotEmpty) {
+                        return AnimatedScale(
+                          scale: 1.0,
+                          duration: const Duration(milliseconds: 200),
+                          child: TextButton(
+                            onPressed: () {
+                              _showClearDialog(context);
+                            },
+                            child: const Text('Clear All'),
+                          ),
+                        );
+                      }
+                      return const SizedBox.shrink();
+                    },
+                  ),
+                ],
+              ),
             ),
           ),
 
@@ -50,42 +59,49 @@ class FavoritesPage extends StatelessWidget {
             child: BlocBuilder<FavoritesCubit, FavoritesState>(
               builder: (context, favoritesState) {
                 if (favoritesState.favoriteCountries.isEmpty) {
-                  return Center(
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Icon(
-                          Icons.favorite_border,
-                          size: 64,
-                          color: Theme.of(context)
-                              .colorScheme
-                              .onSurface
-                              .withValues(alpha: 0.5),
-                        ),
-                        const SizedBox(height: 16),
-                        Text(
-                          'No favorite countries yet',
-                          style: TextStyle(
-                            fontSize: 18,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.7),
+                  return SlideInAnimation(
+                    delay: const Duration(milliseconds: 200),
+                    child: Center(
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          AnimatedScale(
+                            scale: 1.0,
+                            duration: const Duration(milliseconds: 500),
+                            child: Icon(
+                              Icons.favorite_border,
+                              size: 64,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
+                            ),
                           ),
-                        ),
-                        const SizedBox(height: 8),
-                        Text(
-                          'Add countries to your favorites\nfrom the home page',
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            fontSize: 14,
-                            color: Theme.of(context)
-                                .colorScheme
-                                .onSurface
-                                .withValues(alpha: 0.5),
+                          const SizedBox(height: 16),
+                          Text(
+                            'No favorite countries yet',
+                            style: TextStyle(
+                              fontSize: 18,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.7),
+                            ),
                           ),
-                        ),
-                      ],
+                          const SizedBox(height: 8),
+                          Text(
+                            'Add countries to your favorites\nfrom the home page',
+                            textAlign: TextAlign.center,
+                            style: TextStyle(
+                              fontSize: 14,
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.5),
+                            ),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 }
@@ -143,7 +159,10 @@ class FavoritesPage extends StatelessWidget {
                         itemCount: favoriteCountries.length,
                         itemBuilder: (context, index) {
                           final country = favoriteCountries[index];
-                          return CountryCardWidget(country: country);
+                          return StaggeredListAnimation(
+                            index: index,
+                            child: CountryCardWidget(country: country),
+                          );
                         },
                       );
                     }
