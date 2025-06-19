@@ -21,5 +21,5 @@ class CountriesEntity extends Equatable {
 
   @override
   List<Object?> get props =>
-      [name, region, subregion, population, area, timezones];
+      [name, region, subregion, population, area, timezones, flags];
 }

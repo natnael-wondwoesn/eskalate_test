@@ -37,17 +37,22 @@ class _CountrySearchWidgetState extends State<CountrySearchWidget> {
               labelText: 'Enter country name',
               hintText: 'e.g., Germany, France, Japan',
               prefixIcon: const Icon(Icons.search),
-              suffixIcon: IconButton(
-                icon: const Icon(Icons.clear),
-                onPressed: () {
-                  _searchController.clear();
-                  context
-                      .read<CountriesBloc>()
-                      .add(const ResetCountriesEvent());
-                },
-              ),
+              suffixIcon: _searchController.text.isNotEmpty
+                  ? IconButton(
+                      icon: const Icon(Icons.clear, color: Colors.red),
+                      onPressed: () {
+                        _searchController.clear();
+                        context
+                            .read<CountriesBloc>()
+                            .add(const ResetCountriesEvent());
+                      },
+                    )
+                  : null,
               border: const OutlineInputBorder(),
             ),
+            onChanged: (value) {
+              setState(() {});
+            },
             onSubmitted: (value) => _searchCountry(context, value),
           ),
           const SizedBox(height: 16),
