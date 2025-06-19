@@ -1,6 +1,6 @@
 # Countries Explorer 🌍
 
-A comprehensive Flutter application that demonstrates **Clean Architecture**, **Dependency Injection**, **BLoC Pattern**, and **State Persistence** for exploring country information using the REST Countries API. Features include favorites management, theme switching, local caching, and search functionality.
+A comprehensive Flutter application that demonstrates **Clean Architecture**, **Dependency Injection**, **BLoC Pattern**, **State Persistence**, and **Smooth Animations** for exploring country information using the REST Countries API. Features include favorites management, theme switching, local caching, search functionality, and delightful user experience with subtle animations and page transitions.
 
 ## 🏗️ Architecture Overview
 
@@ -33,6 +33,9 @@ This project follows **Clean Architecture** principles with:
 - **Loading States** - Proper loading indicators throughout the app
 - **Responsive Design** - Optimized for different screen sizes
 - **Persistent State** - Favorites and theme preferences survive app restarts
+- **Smooth Animations** - Delightful page transitions, staggered list animations, and interactive elements
+- **Hero Animations** - Seamless shared element transitions between pages
+- **Animated Interactions** - Responsive favorite buttons, theme toggles, and navigation elements
 
 ## 🚀 Getting Started
 
@@ -64,6 +67,9 @@ This project follows **Clean Architecture** principles with:
 ```
 lib/
 ├── core/
+│   ├── animations/
+│   │   ├── animated_widgets.dart              # Custom animated components (staggered lists, cards, buttons)
+│   │   └── page_transitions.dart              # Custom page transition animations
 │   ├── constants/
 │   │   └── api.dart                           # API endpoints and configuration
 │   ├── di/
