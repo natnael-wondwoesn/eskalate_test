@@ -42,7 +42,7 @@ class _CountriesViewState extends State<CountriesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[50],
+      backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
         children: [
@@ -58,7 +58,7 @@ class _CountriesViewState extends State<CountriesView> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.blue,
+        selectedItemColor: Colors.black,
         unselectedItemColor: Colors.grey,
         items: const [
           BottomNavigationBarItem(
@@ -84,12 +84,14 @@ class _CountriesViewState extends State<CountriesView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                const Text(
-                  'Countries',
-                  style: TextStyle(
-                    fontSize: 24,
-                    fontWeight: FontWeight.bold,
-                    color: Colors.black,
+                Center(
+                  child: const Text(
+                    'Countries',
+                    style: TextStyle(
+                      fontSize: 24,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
                   ),
                 ),
                 BlocBuilder<ThemeCubit, ThemeMode>(
@@ -130,8 +132,14 @@ class _CountriesViewState extends State<CountriesView> {
                 decoration: const InputDecoration(
                   hintText: 'Search for a country',
                   hintStyle: TextStyle(color: Colors.grey),
-                  prefixIcon: Icon(Icons.search, color: Colors.grey),
-                  border: InputBorder.none,
+                  prefixIcon: Icon(
+                    Icons.search,
+                    color: Color.fromRGBO(100, 100, 100, 0.4),
+                  ),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.all(Radius.circular(12)),
+                    borderSide: BorderSide.none,
+                  ),
                   contentPadding: EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,
