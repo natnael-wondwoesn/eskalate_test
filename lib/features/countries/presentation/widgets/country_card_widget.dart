@@ -29,11 +29,14 @@ class CountryCardWidget extends StatelessWidget {
         child: Container(
           margin: const EdgeInsets.only(bottom: 12),
           decoration: BoxDecoration(
-            color: Color.fromRGBO(255, 255, 255, 1),
+            color: Theme.of(context).colorScheme.surface,
             borderRadius: BorderRadius.circular(12),
             boxShadow: [
               BoxShadow(
-                color: Colors.black.withValues(alpha: 0.05),
+                color: Colors.black.withValues(
+                    alpha: Theme.of(context).brightness == Brightness.dark
+                        ? 0.2
+                        : 0.05),
                 blurRadius: 8,
                 offset: const Offset(0, 2),
               ),
@@ -50,13 +53,16 @@ class CountryCardWidget extends StatelessWidget {
                   decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(8),
                     border: Border.all(
-                      color: Colors.grey.shade300,
+                      color: Theme.of(context)
+                          .colorScheme
+                          .outline
+                          .withValues(alpha: 0.3),
                       width: 0.5,
                     ),
                   ),
                   child: ClipRRect(
                     borderRadius: BorderRadius.circular(8),
-                    child: _buildFlagImage(),
+                    child: _buildFlagImage(context),
                   ),
                 ),
 
@@ -69,10 +75,10 @@ class CountryCardWidget extends StatelessWidget {
                     children: [
                       Text(
                         country.name,
-                        style: const TextStyle(
+                        style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w600,
-                          color: Colors.black87,
+                          color: Theme.of(context).colorScheme.onSurface,
                         ),
                       ),
                       const SizedBox(height: 4),
@@ -80,7 +86,10 @@ class CountryCardWidget extends StatelessWidget {
                         'Population: ${_formatPopulation(country.population)}',
                         style: TextStyle(
                           fontSize: 14,
-                          color: Colors.grey[600],
+                          color: Theme.of(context)
+                              .colorScheme
+                              .onSurface
+                              .withValues(alpha: 0.7),
                         ),
                       ),
                     ],
@@ -103,7 +112,12 @@ class CountryCardWidget extends StatelessWidget {
                         padding: const EdgeInsets.all(8),
                         child: Icon(
                           isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: isFavorite ? Colors.red : Colors.grey,
+                          color: isFavorite
+                              ? Colors.red
+                              : Theme.of(context)
+                                  .colorScheme
+                                  .onSurface
+                                  .withValues(alpha: 0.6),
                           size: 24,
                         ),
                       ),
@@ -118,7 +132,7 @@ class CountryCardWidget extends StatelessWidget {
     );
   }
 
-  Widget _buildFlagImage() {
+  Widget _buildFlagImage(BuildContext context) {
     try {
       if (country.flags is Map && country.flags['png'] != null) {
         return Image.network(
@@ -127,7 +141,7 @@ class CountryCardWidget extends StatelessWidget {
           loadingBuilder: (context, child, loadingProgress) {
             if (loadingProgress == null) return child;
             return Container(
-              color: Colors.grey[200],
+              color: Theme.of(context).colorScheme.surfaceContainerHighest,
               child: const Center(
                 child: SizedBox(
                   width: 20,
@@ -138,24 +152,24 @@ class CountryCardWidget extends StatelessWidget {
             );
           },
           errorBuilder: (context, error, stackTrace) {
-            return _buildFallbackFlag();
+            return _buildFallbackFlag(context);
           },
         );
       }
     } catch (e) {
-      return _buildFallbackFlag();
+      return _buildFallbackFlag(context);
     }
 
-    return _buildFallbackFlag();
+    return _buildFallbackFlag(context);
   }
 
-  Widget _buildFallbackFlag() {
+  Widget _buildFallbackFlag(BuildContext context) {
     return Container(
-      color: Colors.grey[200],
+      color: Theme.of(context).colorScheme.surfaceContainerHighest,
       child: Center(
         child: Icon(
           Icons.flag,
-          color: Colors.grey[500],
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.5),
           size: 24,
         ),
       ),

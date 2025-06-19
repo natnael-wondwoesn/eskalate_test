@@ -19,7 +19,7 @@ class CountriesRemoteDataSourceImpl implements CountriesRemoteDataSource {
       logger.i('Fetching all countries from API');
 
       final response = await dio.get(
-        '$baseUrl/all',
+        '$baseUrl/independent',
         queryParameters: {
           'fields': 'name,region,subregion,population,area,timezones,flags',
         },

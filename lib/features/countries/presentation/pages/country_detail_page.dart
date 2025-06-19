@@ -15,7 +15,7 @@ class CountryDetailPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Theme.of(context).colorScheme.surface,
       body: SafeArea(
         child: Column(
           children: [
@@ -26,15 +26,16 @@ class CountryDetailPage extends StatelessWidget {
             Expanded(
               child: SingleChildScrollView(
                 child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     // Flag image
                     _buildFlagSection(),
 
                     // Key Statistics section
-                    _buildKeyStatistics(),
+                    _buildKeyStatistics(context),
 
                     // Timezone section
-                    _buildTimezoneSection(),
+                    _buildTimezoneSection(context),
 
                     const SizedBox(height: 32),
                   ],
@@ -56,9 +57,9 @@ class CountryDetailPage extends StatelessWidget {
             onTap: () => Navigator.pop(context),
             child: Container(
               padding: const EdgeInsets.all(8),
-              child: const Icon(
+              child: Icon(
                 Icons.arrow_back,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
                 size: 24,
               ),
             ),
@@ -67,10 +68,10 @@ class CountryDetailPage extends StatelessWidget {
           Expanded(
             child: Text(
               country.name,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 20,
                 fontWeight: FontWeight.w600,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
             ),
           ),
@@ -88,7 +89,12 @@ class CountryDetailPage extends StatelessWidget {
                   padding: const EdgeInsets.all(8),
                   child: Icon(
                     isFavorite ? Icons.favorite : Icons.favorite_border,
-                    color: isFavorite ? Colors.red : Colors.grey,
+                    color: isFavorite
+                        ? Colors.red
+                        : Theme.of(context)
+                            .colorScheme
+                            .onSurface
+                            .withValues(alpha: 0.6),
                     size: 24,
                   ),
                 ),
@@ -192,16 +198,20 @@ class CountryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildKeyStatistics() {
+  Widget _buildKeyStatistics(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
+      // margin: const EdgeInsets.symmetric(horizontal: 16),r
       padding: const EdgeInsets.all(24),
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
+        color: Theme.of(context).colorScheme.surface,
         borderRadius: BorderRadius.circular(12),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
+            color: Colors.black.withValues(
+                alpha: Theme.of(context).brightness == Brightness.dark
+                    ? 0.2
+                    : 0.05),
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),
@@ -210,25 +220,26 @@ class CountryDetailPage extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Key Statistics',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 20),
-          _buildStatRow('Area', _formatArea(country.area)),
-          _buildStatRow('Population', _formatPopulation(country.population)),
-          _buildStatRow('Region', country.region),
-          _buildStatRow('Sub Region', country.subregion),
+          _buildStatRow(context, 'Area', _formatArea(country.area)),
+          _buildStatRow(
+              context, 'Population', _formatPopulation(country.population)),
+          _buildStatRow(context, 'Region', country.region),
+          _buildStatRow(context, 'Sub Region', country.subregion),
         ],
       ),
     );
   }
 
-  Widget _buildStatRow(String label, String value) {
+  Widget _buildStatRow(BuildContext context, String label, String value) {
     return Padding(
       padding: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -238,16 +249,19 @@ class CountryDetailPage extends StatelessWidget {
             label,
             style: TextStyle(
               fontSize: 14,
-              color: Colors.grey[600],
+              color: Theme.of(context)
+                  .colorScheme
+                  .onSurface
+                  .withValues(alpha: 0.7),
             ),
           ),
           Flexible(
             child: Text(
               value,
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 14,
                 fontWeight: FontWeight.w500,
-                color: Colors.black,
+                color: Theme.of(context).colorScheme.onSurface,
               ),
               textAlign: TextAlign.right,
             ),
@@ -257,40 +271,34 @@ class CountryDetailPage extends StatelessWidget {
     );
   }
 
-  Widget _buildTimezoneSection() {
+  Widget _buildTimezoneSection(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.all(16),
+      // margin: const EdgeInsets.all(16),
       padding: const EdgeInsets.all(24),
+      width: double.infinity,
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.05),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
+        color: Theme.of(context).colorScheme.surface,
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
+        // mainAxisAlignment: MainAxisAlignment.start,
         children: [
-          const Text(
+          Text(
             'Timezone',
             style: TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
-              color: Colors.black,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
           const SizedBox(height: 16),
-          _buildTimezoneChips(),
+          _buildTimezoneChips(context),
         ],
       ),
     );
   }
 
-  Widget _buildTimezoneChips() {
+  Widget _buildTimezoneChips(BuildContext context) {
     List<String> timezones = [];
 
     if (country.timezones is List) {
@@ -305,7 +313,8 @@ class CountryDetailPage extends StatelessWidget {
         'No timezone information available',
         style: TextStyle(
           fontSize: 14,
-          color: Colors.grey[600],
+          fontWeight: FontWeight.w800,
+          color: Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.7),
         ),
       );
     }
@@ -317,19 +326,20 @@ class CountryDetailPage extends StatelessWidget {
         return Container(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           decoration: BoxDecoration(
-            color: Colors.grey[100],
-            borderRadius: BorderRadius.circular(20),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(7),
             border: Border.all(
-              color: Colors.grey[300]!,
+              color:
+                  Theme.of(context).colorScheme.outline.withValues(alpha: 0.3),
               width: 1,
             ),
           ),
           child: Text(
             timezone,
-            style: const TextStyle(
+            style: TextStyle(
               fontSize: 14,
-              fontWeight: FontWeight.w500,
-              color: Colors.black87,
+              fontWeight: FontWeight.w900,
+              color: Theme.of(context).colorScheme.onSurface,
             ),
           ),
         );

@@ -18,16 +18,19 @@ This project follows **Clean Architecture** principles with:
 ### Core Functionality
 - **Browse All Countries** - Load and display all countries with detailed information
 - **Real-time Search** - Filter countries by name, region, or subregion
+- **Country Detail Views** - Tap any country to view comprehensive detailed information
 - **Favorites Management** - Add/remove countries to/from favorites with persistence
 - **Theme Switching** - Light/Dark/System theme modes with persistence
-- **Local Caching** - Offline support with automatic cache management
+- **Local Caching** - Offline support with automatic cache management (24-hour validity)
 - **Pull to Refresh** - Update countries data with swipe gesture
 
 ### User Experience
 - **Beautiful UI** - Modern Material Design 3 interface with bottom navigation
+- **Country Cards** - Interactive cards with flag images and quick favorite actions
+- **Detailed Country Pages** - Full-screen views with statistics, timezones, and flag displays
+- **SVG Flag Support** - High-quality scalable flag images with PNG fallbacks
 - **Error Handling** - Graceful error states with retry functionality
 - **Loading States** - Proper loading indicators throughout the app
-- **Country Details** - Comprehensive country information display
 - **Responsive Design** - Optimized for different screen sizes
 - **Persistent State** - Favorites and theme preferences survive app restarts
 
@@ -98,9 +101,12 @@ lib/
 │           │   ├── countries_event.dart                      # BLoC events
 │           │   └── countries_state.dart                      # BLoC states
 │           ├── pages/
-│           │   └── countries_page.dart                       # Main page with bottom navigation
+│           │   ├── countries_page.dart                       # Main page with bottom navigation
+│           │   └── country_detail_page.dart                  # Detailed country information page
 │           └── widgets/
-│               ├── country_card_widget.dart                  # Individual country display
+│               ├── country_card_widget.dart                  # Interactive country cards with navigation
+│               ├── countries_list_widget.dart                # Countries list container
+│               ├── country_search_widget.dart                # Search functionality widget
 │               └── favorites_page.dart                       # Favorites tab implementation
 └── main.dart                                                # App entry point with HydratedBloc setup
 ```
@@ -214,15 +220,18 @@ The app integrates with the [REST Countries API](https://restcountries.com/v3.1)
 
 ### Data Fields Retrieved:
 - **Basic Info**: Country name, region, subregion
-- **Demographics**: Population count
-- **Geography**: Total area
-- **Metadata**: Timezones, flag images
+- **Demographics**: Population count with smart formatting
+- **Geography**: Total area with proper units (sq km)
+- **Visual Assets**: High-quality SVG and PNG flag images
+- **Time Information**: Complete timezone data with visual display
 
 ### Caching Strategy:
 - **First Load**: Data fetched from API and cached locally
+- **Cache Duration**: 24-hour validity period for optimal performance
 - **Subsequent Loads**: Served from cache for offline support
 - **Manual Refresh**: Pull-to-refresh forces API update
-- **Cache Expiration**: Configurable cache validity period
+- **Cache Management**: Automatic cleanup of expired cache data
+- **Fallback Mechanism**: Cache used when API is unavailable
 
 ## 📱 User Interface
 
@@ -231,16 +240,31 @@ The app integrates with the [REST Countries API](https://restcountries.com/v3.1)
    - **Home Tab**: All countries with search functionality
    - **Favorites Tab**: Saved favorite countries
 
+2. **Page Navigation**
+   - **Countries List → Country Detail**: Tap any country card for detailed view
+   - **Country Detail**: Full-screen information with back navigation
+   - **Favorites Integration**: Add/remove favorites from any page
+
 ### Home Tab Features:
 - **Search Bar**: Real-time filtering by name/region/subregion
-- **Countries Grid**: Card-based layout with essential information
+- **Country Cards**: Interactive cards with flag images and population info
+- **Navigation**: Tap any country card to view detailed information
+- **Quick Favorites**: Heart icon on each card for instant favorite toggle
 - **Pull to Refresh**: Manual data synchronization
 - **Theme Toggle**: Switch between light/dark modes
+
+### Country Detail Page Features:
+- **High-Quality Flags**: SVG flag images with PNG fallbacks and loading states
+- **Key Statistics**: Formatted population, area, region, and subregion data
+- **Timezone Information**: Visual timezone chips display
+- **Favorite Integration**: Toggle favorite status from detail page
+- **Responsive Layout**: Beautiful card-based statistics display
 
 ### Favorites Tab Features:
 - **Persistent Storage**: Favorites saved using HydratedBloc
 - **Quick Access**: Easy management of saved countries
-- **Favorite Toggle**: Heart icon for add/remove actions
+- **Detailed Navigation**: Tap favorites to view full country details
+- **Empty State**: Friendly message when no favorites are saved
 
 ### UI Components:
 - **Material Design 3**: Modern, accessible design system
@@ -317,11 +341,14 @@ flutter build web --release
 
 ## 📊 Performance Optimizations
 
-- **Lazy Loading**: Dependencies created only when needed
-- **Local Caching**: Reduced API calls with SharedPreferences
-- **State Persistence**: Instant app startup with saved state
+- **Lazy Loading**: Dependencies created only when needed via GetIt factory pattern
+- **Smart Caching**: 24-hour cache validity reduces unnecessary API calls
+- **State Persistence**: Instant app startup with HydratedBloc saved state
 - **Efficient Rebuilds**: BLoC pattern minimizes unnecessary UI updates
-- **Image Optimization**: SVG support for scalable flag icons
+- **Image Optimization**: SVG flags with PNG fallbacks and loading states
+- **Navigation Optimization**: Efficient page transitions with Hero animations
+- **Memory Management**: Proper disposal of controllers and listeners
+- **Network Optimization**: Dio client with timeouts and retry mechanisms
 
 ## 🔒 Error Handling
 

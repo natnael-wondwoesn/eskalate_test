@@ -42,7 +42,6 @@ class _CountriesViewState extends State<CountriesView> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: IndexedStack(
         index: _selectedIndex,
         children: [
@@ -58,8 +57,10 @@ class _CountriesViewState extends State<CountriesView> {
           });
         },
         type: BottomNavigationBarType.fixed,
-        selectedItemColor: Colors.black,
-        unselectedItemColor: Colors.grey,
+        selectedItemColor: Theme.of(context).colorScheme.primary,
+        unselectedItemColor:
+            Theme.of(context).colorScheme.onSurface.withValues(alpha: 0.6),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         items: const [
           BottomNavigationBarItem(
             icon: Icon(Icons.home),
@@ -84,14 +85,12 @@ class _CountriesViewState extends State<CountriesView> {
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Center(
-                  child: const Text(
-                    'Countries',
-                    style: TextStyle(
-                      fontSize: 24,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
-                    ),
+                Text(
+                  'Countries',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Theme.of(context).colorScheme.onSurface,
                   ),
                 ),
                 BlocBuilder<ThemeCubit, ThemeMode>(
@@ -104,7 +103,7 @@ class _CountriesViewState extends State<CountriesView> {
                         themeMode == ThemeMode.dark
                             ? Icons.light_mode
                             : Icons.dark_mode,
-                        color: Colors.black,
+                        color: Theme.of(context).colorScheme.onSurface,
                       ),
                     );
                   },
@@ -119,7 +118,7 @@ class _CountriesViewState extends State<CountriesView> {
                 const EdgeInsets.symmetric(horizontal: 16.0, vertical: 8.0),
             child: Container(
               decoration: BoxDecoration(
-                color: Colors.grey[200],
+                color: Theme.of(context).colorScheme.surfaceContainerHighest,
                 borderRadius: BorderRadius.circular(12),
               ),
               child: TextField(
@@ -129,18 +128,29 @@ class _CountriesViewState extends State<CountriesView> {
                         SearchCountriesEvent(query: value),
                       );
                 },
-                decoration: const InputDecoration(
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.onSurface,
+                ),
+                decoration: InputDecoration(
                   hintText: 'Search for a country',
-                  hintStyle: TextStyle(color: Colors.grey),
+                  hintStyle: TextStyle(
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
+                  ),
                   prefixIcon: Icon(
                     Icons.search,
-                    color: Color.fromRGBO(100, 100, 100, 0.4),
+                    color: Theme.of(context)
+                        .colorScheme
+                        .onSurface
+                        .withValues(alpha: 0.6),
                   ),
-                  border: OutlineInputBorder(
+                  border: const OutlineInputBorder(
                     borderRadius: BorderRadius.all(Radius.circular(12)),
                     borderSide: BorderSide.none,
                   ),
-                  contentPadding: EdgeInsets.symmetric(
+                  contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,
                     vertical: 12,
                   ),
