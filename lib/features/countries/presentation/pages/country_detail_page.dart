@@ -101,37 +101,40 @@ class CountryDetailPage extends StatelessWidget {
   }
 
   Widget _buildFlagSection() {
-    return Container(
-      margin: const EdgeInsets.all(16),
-      height: 240,
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(12),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withValues(alpha: 0.1),
-            blurRadius: 8,
-            offset: const Offset(0, 2),
-          ),
-        ],
-      ),
-      child: ClipRRect(
-        borderRadius: BorderRadius.circular(12),
-        child: _buildFlagImage(),
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 12.0),
+      child: Container(
+        height: 240,
+        width: double.infinity,
+        decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(10),
+          boxShadow: [
+            BoxShadow(
+              color: Colors.black.withValues(alpha: 0.1),
+              blurRadius: 8,
+              offset: const Offset(0, 2),
+            ),
+          ],
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(5),
+          child: _buildFlagImage(),
+        ),
       ),
     );
   }
 
   Widget _buildFlagImage() {
     try {
-      if (country.flags is Map && country.flags['svg'] != null) {
-        return Image.network(
-          country.flags['svg'],
-          width: double.infinity,
-          height: double.infinity,
-          fit: BoxFit.cover,
-          loadingBuilder: (context, child, loadingProgress) {
-            if (loadingProgress == null) return child;
-            return Container(
+      if (country.flags is Map) {
+        // Try SVG first
+        if (country.flags['svg'] != null) {
+          return SvgPicture.network(
+            country.flags['svg'],
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            placeholderBuilder: (context) => Container(
               color: Colors.grey[200],
               child: const Center(
                 child: SizedBox(
@@ -140,12 +143,34 @@ class CountryDetailPage extends StatelessWidget {
                   child: CircularProgressIndicator(strokeWidth: 3),
                 ),
               ),
-            );
-          },
-          errorBuilder: (context, error, stackTrace) {
-            return _buildFallbackFlag();
-          },
-        );
+            ),
+          );
+        }
+        // Fallback to PNG if SVG is not available
+        else if (country.flags['png'] != null) {
+          return Image.network(
+            country.flags['png'],
+            width: double.infinity,
+            height: double.infinity,
+            fit: BoxFit.cover,
+            loadingBuilder: (context, child, loadingProgress) {
+              if (loadingProgress == null) return child;
+              return Container(
+                color: Colors.grey[200],
+                child: const Center(
+                  child: SizedBox(
+                    width: 40,
+                    height: 40,
+                    child: CircularProgressIndicator(strokeWidth: 3),
+                  ),
+                ),
+              );
+            },
+            errorBuilder: (context, error, stackTrace) {
+              return _buildFallbackFlag();
+            },
+          );
+        }
       }
     } catch (e) {
       return _buildFallbackFlag();
