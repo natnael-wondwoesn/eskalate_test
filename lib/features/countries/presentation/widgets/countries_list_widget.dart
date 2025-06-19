@@ -13,60 +13,116 @@ class CountriesListWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     if (countries.isEmpty) {
       return const Center(
-        child: Text(
-          'No countries found',
-          style: TextStyle(fontSize: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            Icon(
+              Icons.public_off,
+              size: 64,
+              color: Colors.grey,
+            ),
+            SizedBox(height: 16),
+            Text(
+              'No countries found',
+              style: TextStyle(fontSize: 16),
+            ),
+            SizedBox(height: 8),
+            Text(
+              'Pull down to refresh',
+              style: TextStyle(fontSize: 14, color: Colors.grey),
+            ),
+          ],
         ),
       );
     }
 
-    return ListView.builder(
-      itemCount: countries.length,
-      itemBuilder: (context, index) {
-        final country = countries[index];
-        return Card(
-          margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-          child: ListTile(
-            leading: CircleAvatar(
-              backgroundColor: Colors.blue.shade100,
-              child: Text(
-                country.name.isNotEmpty ? country.name[0].toUpperCase() : '?',
-                style: TextStyle(
-                  color: Colors.blue.shade800,
-                  fontWeight: FontWeight.bold,
-                ),
+    return Column(
+      children: [
+        // Cache indicator
+        Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: Theme.of(context).colorScheme.surfaceContainerHighest,
+            border: Border(
+              bottom: BorderSide(
+                color: Theme.of(context).dividerColor,
+                width: 0.5,
               ),
             ),
-            title: Text(
-              country.name,
-              style: const TextStyle(fontWeight: FontWeight.bold),
-            ),
-            subtitle: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Region: ${country.region}'),
-                if (country.subregion.isNotEmpty)
-                  Text('Subregion: ${country.subregion}'),
-              ],
-            ),
-            trailing: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Text(
-                  'Pop: ${_formatNumber(country.population)}',
-                  style: const TextStyle(fontSize: 12),
-                ),
-                Text(
-                  'Area: ${_formatNumber(country.area)} km²',
-                  style: const TextStyle(fontSize: 12),
-                ),
-              ],
-            ),
-            onTap: () => _showCountryDetails(context, country),
           ),
-        );
-      },
+          child: Row(
+            children: [
+              Icon(
+                Icons.cached,
+                size: 16,
+                color: Theme.of(context).colorScheme.onSurfaceVariant,
+              ),
+              const SizedBox(width: 8),
+              Text(
+                '${countries.length} countries loaded • Pull down to refresh',
+                style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                      color: Theme.of(context).colorScheme.onSurfaceVariant,
+                    ),
+              ),
+            ],
+          ),
+        ),
+        // Countries list
+        Expanded(
+          child: ListView.builder(
+            itemCount: countries.length,
+            itemBuilder: (context, index) {
+              final country = countries[index];
+              return Card(
+                margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                child: ListTile(
+                  leading: CircleAvatar(
+                    backgroundColor:
+                        Theme.of(context).colorScheme.primaryContainer,
+                    child: Text(
+                      country.name.isNotEmpty
+                          ? country.name[0].toUpperCase()
+                          : '?',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.onPrimaryContainer,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
+                  ),
+                  title: Text(
+                    country.name,
+                    style: const TextStyle(fontWeight: FontWeight.bold),
+                  ),
+                  subtitle: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text('Region: ${country.region}'),
+                      if (country.subregion.isNotEmpty)
+                        Text('Subregion: ${country.subregion}'),
+                    ],
+                  ),
+                  trailing: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    crossAxisAlignment: CrossAxisAlignment.end,
+                    children: [
+                      Text(
+                        'Pop: ${_formatNumber(country.population)}',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                      Text(
+                        'Area: ${_formatNumber(country.area)} km²',
+                        style: Theme.of(context).textTheme.bodySmall,
+                      ),
+                    ],
+                  ),
+                  onTap: () => _showCountryDetails(context, country),
+                ),
+              );
+            },
+          ),
+        ),
+      ],
     );
   }
 

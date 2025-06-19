@@ -11,6 +11,10 @@ class GetAllCountriesEvent extends CountriesEvent {
   const GetAllCountriesEvent();
 }
 
+class RefreshCountriesEvent extends CountriesEvent {
+  const RefreshCountriesEvent();
+}
+
 class GetCountryByNameEvent extends CountriesEvent {
   final String countryName;
 

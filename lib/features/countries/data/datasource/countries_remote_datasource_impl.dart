@@ -22,7 +22,7 @@ class CountriesRemoteDataSourceImpl implements CountriesRemoteDataSource {
         '$baseUrl/all',
         queryParameters: {
           'status': 'true',
-          'fields': 'name,region,subregion,population,area,timezones',
+          'fields': 'name,region,subregion,population,area,timezones,flags',
         },
       );
 
@@ -55,7 +55,7 @@ class CountriesRemoteDataSourceImpl implements CountriesRemoteDataSource {
       final response = await dio.get(
         '$baseUrl/name/$name',
         queryParameters: {
-          'fields': 'name,region,subregion,population,area,timezones',
+          'fields': 'name,region,subregion,population,area,timezones,flags',
           'fullText': 'true',
         },
       );

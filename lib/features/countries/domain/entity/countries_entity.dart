@@ -7,6 +7,7 @@ class CountriesEntity extends Equatable {
   final String population;
   final String area;
   final dynamic timezones;
+  final dynamic flags;
 
   const CountriesEntity({
     required this.name,
@@ -15,6 +16,7 @@ class CountriesEntity extends Equatable {
     required this.population,
     required this.area,
     required this.timezones,
+    required this.flags,
   });
 
   @override

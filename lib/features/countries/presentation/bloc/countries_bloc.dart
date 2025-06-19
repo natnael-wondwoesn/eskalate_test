@@ -16,8 +16,12 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     required this.getCountryByNameUseCase,
   }) : super(const CountriesInitial()) {
     on<GetAllCountriesEvent>(_onGetAllCountries);
+    on<RefreshCountriesEvent>(_onRefreshCountries);
     on<GetCountryByNameEvent>(_onGetCountryByName);
     on<ResetCountriesEvent>(_onResetCountries);
+
+    // Automatically load countries when BLoC is created
+    add(const GetAllCountriesEvent());
   }
 
   Future<void> _onGetAllCountries(
@@ -25,10 +29,10 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
     Emitter<CountriesState> emit,
   ) async {
     try {
-      _logger.i('BLoC: Getting all countries');
+      _logger.i('BLoC: Getting all countries from cache or API');
       emit(const CountriesLoading());
 
-      final countries = await getAllCountriesUseCase.call();
+      final countries = await getAllCountriesUseCase.call(forceRefresh: false);
 
       _logger.i('BLoC: Successfully loaded ${countries.length} countries');
       emit(CountriesAllLoaded(countries: countries));
@@ -36,6 +40,32 @@ class CountriesBloc extends Bloc<CountriesEvent, CountriesState> {
       _logger.e('BLoC: Error getting all countries: $e');
       emit(
           CountriesError(message: 'Failed to load countries: ${e.toString()}'));
+    }
+  }
+
+  Future<void> _onRefreshCountries(
+    RefreshCountriesEvent event,
+    Emitter<CountriesState> emit,
+  ) async {
+    try {
+      _logger.i('BLoC: Refreshing countries from API');
+      // Don't emit loading state for refresh to avoid UI flicker
+
+      final countries = await getAllCountriesUseCase.call(forceRefresh: true);
+
+      _logger.i('BLoC: Successfully refreshed ${countries.length} countries');
+      emit(CountriesAllLoaded(countries: countries));
+    } catch (e) {
+      _logger.e('BLoC: Error refreshing countries: $e');
+      // Show error but keep current state if it's already loaded
+      if (state is CountriesAllLoaded) {
+        // Could emit a special refresh error state here if needed
+        emit(CountriesError(message: 'Failed to refresh: ${e.toString()}'));
+        // Or keep the current state and show a snackbar from UI
+      } else {
+        emit(CountriesError(
+            message: 'Failed to refresh countries: ${e.toString()}'));
+      }
     }
   }
 

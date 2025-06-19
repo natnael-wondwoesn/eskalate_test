@@ -1,7 +1,10 @@
 import 'package:dio/dio.dart';
 import 'package:logger/logger.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import 'countries_remote_datasource.dart';
 import 'countries_remote_datasource_impl.dart';
+import 'countries_local_datasource.dart';
+import 'countries_local_datasource_impl.dart';
 
 class CountriesDataSourceFactory {
   static CountriesRemoteDataSource createRemoteDataSource() {
@@ -34,6 +37,26 @@ class CountriesDataSourceFactory {
 
     return CountriesRemoteDataSourceImpl(
       dio: dio,
+      logger: logger,
+    );
+  }
+
+  static Future<CountriesLocalDataSource> createLocalDataSource() async {
+    final sharedPreferences = await SharedPreferences.getInstance();
+
+    final logger = Logger(
+      printer: PrettyPrinter(
+        methodCount: 2,
+        errorMethodCount: 8,
+        lineLength: 120,
+        colors: true,
+        printEmojis: true,
+        dateTimeFormat: DateTimeFormat.none,
+      ),
+    );
+
+    return CountriesLocalDataSourceImpl(
+      sharedPreferences: sharedPreferences,
       logger: logger,
     );
   }

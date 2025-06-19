@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 
 import '../../../../core/di/dependency_injection.dart';
+import '../../../../core/theme/theme_cubit.dart';
 import '../bloc/countries_bloc.dart';
 import '../bloc/countries_event.dart';
 import '../bloc/countries_state.dart';
@@ -48,6 +49,62 @@ class _CountriesViewState extends State<CountriesView>
     return Scaffold(
       appBar: AppBar(
         title: const Text('Countries Explorer'),
+        actions: [
+          // Dark mode toggle
+          BlocBuilder<ThemeCubit, ThemeMode>(
+            builder: (context, themeMode) {
+              return PopupMenuButton<ThemeMode>(
+                icon: Icon(
+                  themeMode == ThemeMode.dark
+                      ? Icons.dark_mode
+                      : themeMode == ThemeMode.light
+                          ? Icons.light_mode
+                          : Icons.auto_mode,
+                ),
+                onSelected: (ThemeMode mode) {
+                  final themeCubit = context.read<ThemeCubit>();
+                  switch (mode) {
+                    case ThemeMode.light:
+                      themeCubit.setLightTheme();
+                      break;
+                    case ThemeMode.dark:
+                      themeCubit.setDarkTheme();
+                      break;
+                    case ThemeMode.system:
+                      themeCubit.setSystemTheme();
+                      break;
+                  }
+                },
+                itemBuilder: (BuildContext context) => [
+                  const PopupMenuItem(
+                    value: ThemeMode.light,
+                    child: ListTile(
+                      leading: Icon(Icons.light_mode),
+                      title: Text('Light'),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: ThemeMode.dark,
+                    child: ListTile(
+                      leading: Icon(Icons.dark_mode),
+                      title: Text('Dark'),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                  const PopupMenuItem(
+                    value: ThemeMode.system,
+                    child: ListTile(
+                      leading: Icon(Icons.auto_mode),
+                      title: Text('System'),
+                      contentPadding: EdgeInsets.zero,
+                    ),
+                  ),
+                ],
+              );
+            },
+          ),
+        ],
         bottom: TabBar(
           controller: _tabController,
           tabs: const [
@@ -65,26 +122,20 @@ class _CountriesViewState extends State<CountriesView>
       body: TabBarView(
         controller: _tabController,
         children: [
-          // All Countries Tab
+          // All Countries Tab with Pull-to-Refresh
           BlocBuilder<CountriesBloc, CountriesState>(
             builder: (context, state) {
-              return Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.all(16.0),
-                    child: ElevatedButton(
-                      onPressed: () {
-                        context
-                            .read<CountriesBloc>()
-                            .add(const GetAllCountriesEvent());
-                      },
-                      child: const Text('Load All Countries'),
-                    ),
-                  ),
-                  Expanded(
-                    child: _buildCountriesContent(state),
-                  ),
-                ],
+              return RefreshIndicator(
+                onRefresh: () async {
+                  context
+                      .read<CountriesBloc>()
+                      .add(const RefreshCountriesEvent());
+                  // Wait for the refresh to complete
+                  await context.read<CountriesBloc>().stream.firstWhere(
+                        (state) => state is! CountriesLoading,
+                      );
+                },
+                child: _buildCountriesContent(state),
               );
             },
           ),
@@ -98,41 +149,104 @@ class _CountriesViewState extends State<CountriesView>
   Widget _buildCountriesContent(CountriesState state) {
     if (state is CountriesInitial) {
       return const Center(
-        child: Text(
-          'Tap "Load All Countries" to get started',
-          style: TextStyle(fontSize: 16),
+        child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
+            Text(
+              'Loading countries...',
+              style: TextStyle(fontSize: 16),
+            ),
+          ],
         ),
       );
     } else if (state is CountriesLoading) {
       return const Center(
-        child: CircularProgressIndicator(),
-      );
-    } else if (state is CountriesAllLoaded) {
-      return CountriesListWidget(countries: state.countries);
-    } else if (state is CountriesError) {
-      return Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            const Icon(
-              Icons.error_outline,
-              size: 64,
-              color: Colors.red,
-            ),
-            const SizedBox(height: 16),
+            CircularProgressIndicator(),
+            SizedBox(height: 16),
             Text(
-              'Error: ${state.message}',
-              style: const TextStyle(fontSize: 16),
-              textAlign: TextAlign.center,
-            ),
-            const SizedBox(height: 16),
-            ElevatedButton(
-              onPressed: () {
-                context.read<CountriesBloc>().add(const GetAllCountriesEvent());
-              },
-              child: const Text('Retry'),
+              'Loading countries...',
+              style: TextStyle(fontSize: 16),
             ),
           ],
+        ),
+      );
+    } else if (state is CountriesAllLoaded) {
+      if (state.countries.isEmpty) {
+        return Center(
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.public_off,
+                size: 64,
+                color: Colors.grey,
+              ),
+              const SizedBox(height: 16),
+              const Text(
+                'No countries found',
+                style: TextStyle(fontSize: 16),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Pull down to refresh',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context
+                      .read<CountriesBloc>()
+                      .add(const RefreshCountriesEvent());
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
+        );
+      }
+      return CountriesListWidget(countries: state.countries);
+    } else if (state is CountriesError) {
+      return Center(
+        child: SingleChildScrollView(
+          physics: const AlwaysScrollableScrollPhysics(),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              const Icon(
+                Icons.error_outline,
+                size: 64,
+                color: Colors.red,
+              ),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 24),
+                child: Text(
+                  'Error: ${state.message}',
+                  style: const TextStyle(fontSize: 16),
+                  textAlign: TextAlign.center,
+                ),
+              ),
+              const SizedBox(height: 8),
+              const Text(
+                'Pull down to refresh',
+                style: TextStyle(fontSize: 14, color: Colors.grey),
+              ),
+              const SizedBox(height: 16),
+              ElevatedButton(
+                onPressed: () {
+                  context
+                      .read<CountriesBloc>()
+                      .add(const RefreshCountriesEvent());
+                },
+                child: const Text('Retry'),
+              ),
+            ],
+          ),
         ),
       );
     }

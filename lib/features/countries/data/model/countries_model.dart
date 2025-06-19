@@ -8,6 +8,7 @@ class CountriesModel extends CountriesEntity {
     required super.population,
     required super.area,
     required super.timezones,
+    required super.flags,
   });
 
   factory CountriesModel.fromJson(Map<String, dynamic> json) {
@@ -18,6 +19,7 @@ class CountriesModel extends CountriesEntity {
       population: json['population']?.toString() ?? '0',
       area: json['area']?.toString() ?? '0',
       timezones: json['timezones'] ?? [],
+      flags: json['flags'] ?? {},
     );
   }
 
@@ -29,6 +31,7 @@ class CountriesModel extends CountriesEntity {
       'population': int.tryParse(population) ?? 0,
       'area': double.tryParse(area) ?? 0.0,
       'timezones': timezones,
+      'flags': flags,
     };
   }
 
@@ -40,6 +43,7 @@ class CountriesModel extends CountriesEntity {
       population: population,
       area: area,
       timezones: timezones,
+      flags: flags,
     );
   }
 }

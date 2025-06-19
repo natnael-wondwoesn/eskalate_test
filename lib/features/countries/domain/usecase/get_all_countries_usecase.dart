@@ -6,7 +6,7 @@ class GetAllCountriesUseCase {
 
   GetAllCountriesUseCase({required this.repository});
 
-  Future<List<CountriesEntity>> call() async {
-    return await repository.getAllCountries();
+  Future<List<CountriesEntity>> call({bool forceRefresh = false}) async {
+    return await repository.getAllCountries(forceRefresh: forceRefresh);
   }
 }
