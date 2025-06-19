@@ -239,44 +239,75 @@ The app integrates with the [REST Countries API](https://restcountries.com/v3.1)
 - **Cache Management**: Automatic cleanup of expired cache data
 - **Fallback Mechanism**: Cache used when API is unavailable
 
+## 🎬 Animation System
+
+### Custom Animation Components
+
+#### **Page Transitions** (`core/animations/page_transitions.dart`)
+- **Slide Transition**: Smooth right-to-left slide with fade effect
+- **Fade Scale Transition**: Gentle scale and fade combination  
+- **Shared Axis Transition**: Multiple direction options (horizontal, vertical, scaled)
+
+#### **Animated Widgets** (`core/animations/animated_widgets.dart`)
+- **SlideInAnimation**: Configurable slide-in animations with delays
+- **StaggeredListAnimation**: Sequential animations for list items
+- **AnimatedFavoriteButton**: Scale and color transitions for favorite interactions
+- **AnimatedCard**: Interactive cards with press animations and elevation changes
+
+### Animation Features
+- **Hero Animations**: Seamless transitions for flag images and country names between pages
+- **Staggered List Loading**: Countries appear sequentially with smooth slide-in effects
+- **Interactive Elements**: Animated favorite buttons, theme toggles, and navigation icons
+- **Tab Transitions**: Smooth switching between Home and Favorites with slide animations
+- **Loading States**: Animated loading indicators with contextual messages
+- **Theme Transitions**: Smooth icon rotation and color transitions when switching themes
+
 ## 📱 User Interface
 
 ### Navigation Structure:
-1. **Bottom Navigation**
-   - **Home Tab**: All countries with search functionality
-   - **Favorites Tab**: Saved favorite countries
+1. **Bottom Navigation** (with animated tab switching)
+   - **Home Tab**: All countries with search functionality and staggered loading animations
+   - **Favorites Tab**: Saved favorite countries with smooth transitions
 
-2. **Page Navigation**
-   - **Countries List → Country Detail**: Tap any country card for detailed view
-   - **Country Detail**: Full-screen information with back navigation
-   - **Favorites Integration**: Add/remove favorites from any page
+2. **Page Navigation** (with custom transitions)
+   - **Countries List → Country Detail**: Animated slide transition with Hero elements
+   - **Country Detail**: Full-screen with animated header, flag, and statistics sections
+   - **Favorites Integration**: Animated favorite toggles from any page
 
 ### Home Tab Features:
-- **Search Bar**: Real-time filtering by name/region/subregion
-- **Country Cards**: Interactive cards with flag images and population info
-- **Navigation**: Tap any country card to view detailed information
-- **Quick Favorites**: Heart icon on each card for instant favorite toggle
-- **Pull to Refresh**: Manual data synchronization
-- **Theme Toggle**: Switch between light/dark modes
+- **Animated Search Bar**: Real-time filtering with smooth slide-in animation
+- **Interactive Country Cards**: Animated cards with press effects, flag images, and population info
+- **Staggered Loading**: Countries appear sequentially with elegant slide-in animations
+- **Hero Navigation**: Seamless transitions when tapping country cards for detailed view
+- **Animated Favorites**: Heart icons with scale and color transitions for instant toggle
+- **Pull to Refresh**: Manual data synchronization with smooth loading animations
+- **Animated Theme Toggle**: Icon rotation and smooth transitions when switching themes
 
 ### Country Detail Page Features:
+- **Hero Flag Animation**: Smooth shared element transition for flag images from list to detail
+- **Animated Header**: Slide-in animations for back button, country name, and favorite toggle
+- **Sequential Content Loading**: Staggered animations for flag, statistics, and timezone sections
 - **High-Quality Flags**: SVG flag images with PNG fallbacks and loading states
-- **Key Statistics**: Formatted population, area, region, and subregion data
-- **Timezone Information**: Visual timezone chips display
-- **Favorite Integration**: Toggle favorite status from detail page
-- **Responsive Layout**: Beautiful card-based statistics display
+- **Animated Statistics**: Key data cards with smooth slide-in effects
+- **Timezone Chips**: Visual timezone display with subtle entrance animations
+- **Interactive Favorites**: Animated favorite button with scale and color transitions
+- **Responsive Layout**: Beautiful card-based statistics with elevation animations
 
 ### Favorites Tab Features:
-- **Persistent Storage**: Favorites saved using HydratedBloc
-- **Quick Access**: Easy management of saved countries
-- **Detailed Navigation**: Tap favorites to view full country details
-- **Empty State**: Friendly message when no favorites are saved
+- **Animated Tab Switching**: Smooth slide transitions when switching to favorites
+- **Staggered Favorites List**: Sequential slide-in animations for favorite countries
+- **Persistent Storage**: Favorites saved using HydratedBloc with smooth state transitions
+- **Animated Empty State**: Gentle scale animation for the empty favorites icon
+- **Interactive Management**: Animated clear all button and favorite interactions
+- **Hero Navigation**: Seamless transitions when tapping favorites to view details
 
 ### UI Components:
-- **Material Design 3**: Modern, accessible design system
-- **Responsive Layout**: Adapts to different screen sizes
-- **Loading States**: Skeleton loaders and progress indicators
-- **Error Handling**: User-friendly error messages with retry options
+- **Material Design 3**: Modern, accessible design system with smooth animations
+- **Animated Components**: Custom animated cards, buttons, and interactive elements
+- **Responsive Layout**: Adapts to different screen sizes with fluid animations
+- **Enhanced Loading States**: Animated progress indicators with contextual messages
+- **Animated Error Handling**: Error states with scale animations and retry button effects
+- **Interactive Navigation**: Bottom navigation with scale animations and smooth tab transitions
 
 ## 🔄 State Persistence
 
@@ -306,6 +337,69 @@ class FavoritesCubit extends HydratedCubit<FavoritesState> {
     );
   }
 }
+```
+
+## 🎨 Animation Implementation
+
+### Custom Page Transitions
+```dart
+// Slide transition with fade
+Navigator.push(
+  context,
+  PageTransitions.slideTransition(
+    CountryDetailPage(country: country),
+  ),
+);
+
+// Fade scale transition
+Navigator.push(
+  context,
+  PageTransitions.fadeScaleTransition(
+    TargetPage(),
+  ),
+);
+```
+
+### Staggered List Animations
+```dart
+// Sequential slide-in animations for list items
+ListView.builder(
+  itemBuilder: (context, index) {
+    return StaggeredListAnimation(
+      index: index,
+      child: CountryCardWidget(country: countries[index]),
+    );
+  },
+);
+```
+
+### Interactive Animated Elements
+```dart
+// Animated favorite button with scale and color transitions
+AnimatedFavoriteButton(
+  isFavorite: isFavorite,
+  onTap: () => toggleFavorite(),
+);
+
+// Animated card with press effects
+AnimatedCard(
+  onTap: () => navigateToDetail(),
+  child: CardContent(),
+);
+```
+
+### Hero Animations
+```dart
+// Shared element transitions between pages
+Hero(
+  tag: 'flag-${country.name}',
+  child: FlagImage(),
+);
+
+Hero(
+  tag: 'name-${country.name}',
+  child: CountryName(),
+);
 ```
 
 ## 🧪 Testing
@@ -352,9 +446,12 @@ flutter build web --release
 - **State Persistence**: Instant app startup with HydratedBloc saved state
 - **Efficient Rebuilds**: BLoC pattern minimizes unnecessary UI updates
 - **Image Optimization**: SVG flags with PNG fallbacks and loading states
-- **Navigation Optimization**: Efficient page transitions with Hero animations
-- **Memory Management**: Proper disposal of controllers and listeners
+- **Animation Performance**: Hardware-accelerated animations with optimized curves and durations
+- **Staggered Loading**: Prevents frame drops by spacing animations over time
+- **Navigation Optimization**: Efficient custom page transitions with Hero animations
+- **Memory Management**: Proper disposal of animation controllers and listeners
 - **Network Optimization**: Dio client with timeouts and retry mechanisms
+- **Animation Throttling**: Intelligent delays prevent overwhelming the UI thread
 
 ## 🔒 Error Handling
 
@@ -377,9 +474,6 @@ flutter build web --release
 4. Push to the branch (`git push origin feature/amazing-feature`)
 5. Open a Pull Request
 
-## 📄 License
-
-This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
 ## 🙏 Acknowledgments
 
@@ -393,4 +487,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 
 For questions or support, please reach out to the development team.
 
-**Happy Coding! 🎉**
+**Made With Love Happy Coding! 🎉**
